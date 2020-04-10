@@ -1,5 +1,5 @@
-#ifndef LANE_FINDING_ADVANCED_CPP_CALIBRATOR_H
-#define LANE_FINDING_ADVANCED_CPP_CALIBRATOR_H
+#ifndef LANE_FINDING_ADVANCED_CPP_CALIBRATE_H
+#define LANE_FINDING_ADVANCED_CPP_CALIBRATE_H
 
 #include <iostream>
 #include <vector>
@@ -43,4 +43,4 @@ public:
     void read_calib_images(const std::vector<cv::Mat>& images) override;
 };
 
-#endif //LANE_FINDING_ADVANCED_CPP_CALIBRATOR_H
+#endif //LANE_FINDING_ADVANCED_CPP_CALIBRATE_H

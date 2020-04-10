@@ -1,5 +1,5 @@
 #include "read.h"
-#include "calibrator.h"
+#include "calibrate.h"
 #include "display.h"
 
 int main()

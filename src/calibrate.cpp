@@ -1,5 +1,4 @@
-#include "calibrator.h"
-
+#include "calibrate.h"
 
 void Calibrator::write_xml(const std::string &xml_file) const
 {
