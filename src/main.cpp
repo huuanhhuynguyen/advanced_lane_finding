@@ -1,8 +1,9 @@
-//#include
+#include "read.h"
 
 int main()
 {
     // Read images / video
+    std::vector<cv::Mat> images = read_images("data/test_images");
 
     // Create image calibrator from the chessboard images
         // defensive: check dimension of all chessboard images
