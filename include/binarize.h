@@ -15,9 +15,9 @@ cv::Mat hsv_yellow_mask(const cv::Mat& image)
     cv::split(hsv_img, hsv);
 
     // Mask for the yellow color
-    cv::Mat mask_H = (hsv[0] >= 0)   & (hsv[0] <= 30);
-    cv::Mat mask_S = (hsv[1] >= 100) & (hsv[1] <= 255);
-    cv::Mat mask_V = (hsv[2] >= 100) & (hsv[2] <= 255);
+    cv::Mat mask_H = (hsv[0] <= 30);
+    cv::Mat mask_S = (hsv[1] >= 100);
+    cv::Mat mask_V = (hsv[2] >= 100);
     cv::Mat mask = mask_H & mask_S & mask_V;
     mask.convertTo(mask, image.depth());
 
@@ -50,14 +50,14 @@ cv::Mat binarize(const cv::Mat& image)
     {
         const auto mask = hsv_yellow_mask(image);
         bin_img = bin_img | mask;
-        display(image);
-        display(mask);
     }
 
     // highlight white lines by thresholding the equalized frame
     {
         const auto mask = gray_white_mask(image);
         bin_img = bin_img | mask;
+        display(image);
+        display(mask);
     }
 
     return bin_img;
