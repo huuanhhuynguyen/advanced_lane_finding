@@ -1,17 +1,30 @@
 #include "read.h"
+#include "calibrator.h"
+#include "display.h"
 
 int main()
 {
-    // Read images / video
-    std::vector<cv::Mat> images = read_images("data/test_images");
+    // Create an image calibrator from
+    //     - chessboard images (if not done the calibrator before), OR
+    //     - a yaml file, where the calibration values have been saved
+    ChessboardCalibrator calibrator;
+    {
+        // Uncomment the following if calibrate with chessboard images again
+        // std::vector<cv::Mat> calib_images = read_images("../data/camera_calib");
+        // calibrator.read_calib_images(calib_images);
+        // calibrator.write_xml("../data/calib.xml");
+        calibrator.read_xml("../data/calib.xml");
+    }
 
-    // Create image calibrator from the chessboard images
-        // defensive: check dimension of all chessboard images
+    // Read images / video
+    std::vector<cv::Mat> images = read_images("../data/test_images");
 
     // for every image/frame
-
-        // Calibrate the image with the calibrator above
-            // defensive: check dimension image
+    for (const auto& image : images)
+    {
+        // Undistort the original image
+        cv::Mat undistorted_img = calibrator.undistort(image);
+        display(undistorted_img);
 
         // Apply binary thresholding on the image
 
@@ -26,6 +39,8 @@ int main()
         // Visualize lane, boundaries, curvature, center offset
 
         // Display the image
+
+    }
 
     return 0;
 }
