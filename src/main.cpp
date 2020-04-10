@@ -1,6 +1,7 @@
 #include "read.h"
 #include "calibrate.h"
 #include "binarize.h"
+#include "birdeye.h"
 #include "display.h"
 
 int main()
@@ -30,6 +31,7 @@ int main()
         cv::Mat bin_img = binarize(undistorted_img);
 
         // Rectify image to BEV
+        cv::Mat rect_img = bird_eye_view(undistorted_img);
 
         // Detect lane pixels and fit to the lane boundary
 
@@ -40,7 +42,8 @@ int main()
         // Visualize lane, boundaries, curvature, center offset
 
         // Display the image
-        display(bin_img);
+        display(undistorted_img);
+        display(rect_img);
     }
 
     return 0;
