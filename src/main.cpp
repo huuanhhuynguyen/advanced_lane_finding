@@ -1,5 +1,6 @@
 #include "read.h"
 #include "calibrate.h"
+#include "binarize.h"
 #include "display.h"
 
 int main()
@@ -24,9 +25,9 @@ int main()
     {
         // Undistort the original image
         cv::Mat undistorted_img = calibrator.undistort(image);
-        display(undistorted_img);
 
-        // Apply binary thresholding on the image
+        // Binarize the image
+        cv::Mat bin_img = binarize(undistorted_img);
 
         // Rectify image to BEV
 
@@ -39,7 +40,7 @@ int main()
         // Visualize lane, boundaries, curvature, center offset
 
         // Display the image
-
+        display(bin_img);
     }
 
     return 0;
