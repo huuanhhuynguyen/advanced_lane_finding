@@ -25,13 +25,13 @@ int main()
     for (const auto& image : images)
     {
         // Undistort the original image
-        cv::Mat undistorted_img = calibrator.undistort(image);
+        const auto undistorted_img = calibrator.undistort(image);
 
         // Binarize the image
-        cv::Mat bin_img = binarize(undistorted_img);
+        const auto bin_img = binarize(undistorted_img);
 
         // Rectify image to BEV
-        cv::Mat rect_img = bird_eye_view(undistorted_img);
+        const auto rect_img = bird_eye_view(undistorted_img);
 
         // Detect lane pixels and fit to the lane boundary
 
