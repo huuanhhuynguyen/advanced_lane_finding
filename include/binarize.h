@@ -56,8 +56,12 @@ cv::Mat binarize(const cv::Mat& image)
     {
         const auto mask = gray_white_mask(image);
         bin_img = bin_img | mask;
-        display(image);
-        display(mask);
+    }
+
+    // apply (rectangular closing) morphological transformation
+    {
+        const auto kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
+        cv::morphologyEx(bin_img, bin_img, cv::MORPH_CLOSE, kernel);
     }
 
     return bin_img;
