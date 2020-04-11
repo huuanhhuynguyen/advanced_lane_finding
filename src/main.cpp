@@ -63,33 +63,20 @@ int main()
         // draw_points(bev_img_color, right_points, cv::Scalar(0, 255, 0));
         // display(bev_img_color);
 
-        // Fit points
-        std::vector<float> xs, ys;
-        std::transform(left_points.begin(), left_points.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
-        std::transform(left_points.begin(), left_points.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
-        std::vector<float> coeff_left = polyfit_boost(ys, xs, 2);
-
-        xs.clear(); ys.clear();
-        std::transform(right_points.begin(), right_points.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
-        std::transform(right_points.begin(), right_points.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
-        std::vector<float> coeff_right = polyfit_boost(ys, xs, 2);
-
-        int n_points = 30;
-        std::vector<cv::Point2i> points;
-        for (int i = 0; i < n_points; ++i) {
-            float y = i * 20;
-            float x = coeff_left[2] * y * y + coeff_left[1] * y + coeff_left[0];
-            points.emplace_back(int(x), int(y));
+        // Fit points with second polynomial order
+        std::vector<float> coeff_left, coeff_right;
+        {
+            std::vector<float> xs, ys;
+            std::transform(left_points.begin(), left_points.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
+            std::transform(left_points.begin(), left_points.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
+            coeff_left = polyfit_boost(ys, xs, 2);
         }
-        for (int i = 0; i < n_points; ++i) {
-            float y = i * 20;
-            float x = coeff_right[2] * y * y + coeff_right[1] * y + coeff_right[0];
-            points.emplace_back(int(x), int(y));
+        {
+            std::vector<float> xs, ys;
+            std::transform(right_points.begin(), right_points.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
+            std::transform(right_points.begin(), right_points.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
+            coeff_right = polyfit_boost(ys, xs, 2);
         }
-        cv::Mat bev_img_color;
-        cv::cvtColor(bev_img, bev_img_color, cv::COLOR_GRAY2BGR);
-        draw_points(bev_img_color, points, cv::Scalar(255, 0, 0));
-        display(bev_img_color);
 
         // Calculate curvature and vehicle offset from the lane center
 
