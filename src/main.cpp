@@ -5,6 +5,7 @@
 #include "detect.h"
 #include "draw.h"
 #include "polyfit.h"
+#include "offset.h"
 #include "display.h"
 
 int main()
@@ -79,6 +80,10 @@ int main()
         }
 
         // Calculate curvature and vehicle offset from the lane center
+        int vehicle_y = int(bin_img.cols / 2);
+        display(image);
+        float offset = calculate_offset_from_center(vehicle_y, coeff_left, coeff_right);
+        // float curvature = calculate_curvature(coeff_left, coeff_right);
 
         // Warp the detected lane boundaries back to original image
 
