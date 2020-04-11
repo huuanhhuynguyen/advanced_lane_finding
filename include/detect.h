@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <opencv2/highgui/highgui.hpp>
-#include "display.h"
 
 void split_image_left_right(const cv::Mat& img, cv::Mat& left, cv::Mat& right);
 
