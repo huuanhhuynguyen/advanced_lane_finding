@@ -37,7 +37,7 @@ cv::Mat gray_white_mask(const cv::Mat& image)
 
     // Mask for the white color
     cv::Mat mask;
-    cv::threshold(equalized_gray, mask, /*thresh=*/240,
+    cv::threshold(equalized_gray, mask, /*thresh=*/252,
                   /*maxval=*/ 255, cv::THRESH_BINARY);
 
     return mask;
@@ -46,6 +46,7 @@ cv::Mat gray_white_mask(const cv::Mat& image)
 cv::Mat binarize(const cv::Mat& image)
 {
     auto bin_img = cv::Mat(image.size(), image.depth(), double(0));
+
     // highlight yellow color by thresholding in HSV color space
     {
         const auto mask = hsv_yellow_mask(image);
