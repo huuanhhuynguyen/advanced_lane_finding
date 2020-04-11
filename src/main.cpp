@@ -2,6 +2,7 @@
 #include "calibrate.h"
 #include "binarize.h"
 #include "birdeye.h"
+#include "detect.h"
 #include "display.h"
 
 int main()
@@ -31,9 +32,20 @@ int main()
         const auto bin_img = binarize(undistorted_img);
 
         // Rectify image to BEV
-        const auto rect_img = bird_eye_view(undistorted_img);
+        const auto bev_img = bird_eye_view(bin_img);
+        display(bev_img);
 
-        // Detect lane pixels and fit to the lane boundary
+        // Split image into two
+        cv::Mat left_img, right_img;
+        split_image_left_right(bev_img, left_img, right_img);
+
+        // Detect lane points (including outliers)
+        std::vector<cv::Point2i> left_points = detect_lane_points(left_img);
+        std::vector<cv::Point2i> right_points = detect_lane_points(right_img);
+
+        // Fit points
+        // Lane left_lane, right_lane;
+        // fit(left_points, left_lane, right_lane);
 
         // Calculate curvature and vehicle offset from the lane center
 
@@ -42,8 +54,7 @@ int main()
         // Visualize lane, boundaries, curvature, center offset
 
         // Display the image
-        display(undistorted_img);
-        display(rect_img);
+        //display(rect_img);
     }
 
     return 0;
