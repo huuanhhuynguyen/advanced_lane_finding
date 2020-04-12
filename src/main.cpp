@@ -63,12 +63,6 @@ int main()
             rpoints_bev = translate(rpoints, mid, 0);
         }
 
-        // Uncomment to visualize lane points on BEV image
-        // cv::Mat bev_img_color = bev_img.clone();
-        // draw_points(bev_img_color, lpoints_bev, cv::Scalar(0, 0, 255));
-        // draw_points(bev_img_color, rpoints_bev, cv::Scalar(255, 0, 0));
-        // display(bev_img_color);
-
         // Fit points with second polynomial order
         Coefficient left_coeff, right_coeff;
         {
@@ -118,7 +112,29 @@ int main()
         draw_curve(vis_image, lpoints, cv::Scalar(0, 0, 255));
         draw_curve(vis_image, rpoints, cv::Scalar(255, 0, 0));
 
-        // Visualize curvature and offset
+        // TODO Visualize curvature and offset
+
+        // Visualize binary image
+        {
+            cv::Mat small_img;
+            cv::resize(bin_img, small_img, bin_img.size() / 5);
+            overlay(small_img, vis_image, 10, 10);
+        }
+        // Visualize bev image
+        {
+            cv::Mat small_img;
+            cv::resize(bev_img, small_img, bev_img.size() / 5);
+            overlay(small_img, vis_image, 10*2 + small_img.cols, 10);
+        }
+        // Visualize bev image with detected points
+        {
+            cv::Mat bev_img_color = bev_img.clone();
+            draw_points(bev_img_color, lpoints_bev, cv::Scalar(0, 0, 255));
+            draw_points(bev_img_color, rpoints_bev, cv::Scalar(255, 0, 0));
+            cv::Mat small_img;
+            cv::resize(bev_img_color, small_img, bev_img_color.size() / 5);
+            overlay(small_img, vis_image, 10*3 + small_img.cols*2, 10);
+        }
 
         // Display the image
         display(vis_image);

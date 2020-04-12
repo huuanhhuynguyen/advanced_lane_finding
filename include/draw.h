@@ -3,6 +3,7 @@
 
 #include <opencv2/imgproc.hpp>
 
+/// Draw scattered "points" on the "img"
 void draw_points(cv::Mat& img, const std::vector<cv::Point2i>& points,
                  const cv::Scalar& color)
 {
@@ -15,6 +16,7 @@ void draw_points(cv::Mat& img, const std::vector<cv::Point2i>& points,
     }
 }
 
+/// Draw polygon defined by "points" on the "img".
 void draw_polygon(cv::Mat& img, const std::vector<cv::Point2i>& points)
 {
     const int n_points = points.size();
@@ -35,6 +37,7 @@ void draw_polygon(cv::Mat& img, const std::vector<cv::Point2i>& points)
     cv::addWeighted(poly_img, /*alpha=*/0.4, img, /*beta=*/0.6, /*gamma=*/0.0, img);
 }
 
+/// Draw the curve defined by "points" on the "img".
 void draw_curve(cv::Mat& img, const std::vector<cv::Point2i>& points,
                 const cv::Scalar& color)
 {
@@ -45,6 +48,21 @@ void draw_curve(cv::Mat& img, const std::vector<cv::Point2i>& points,
     for (int i = 1; i < points.size(); ++i) {
         cv::line(img, points[i - 1], points[i], color, /*thickness=*/5);
     }
+}
+
+/// Overlay the "add_img" on the "img" at the position (x0, y0).
+/// @param src: color or gray image
+/// @param dst: color image
+void overlay(const cv::Mat& src, cv::Mat& dst, int x0, int y0)
+{
+    cv::Mat src_color;
+    if (src.channels() == 1) {
+        cv::cvtColor(src, src_color, cv::COLOR_GRAY2BGR);
+    } else {
+        src_color = src;
+    }
+
+    src_color.copyTo(dst(cv::Rect(x0, y0, src_color.cols, src_color.rows)));
 }
 
 #endif //LANE_FINDING_ADVANCED_CPP_DRAW_H
