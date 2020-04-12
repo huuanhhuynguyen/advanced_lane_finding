@@ -15,8 +15,14 @@
 #include "radius.h"
 #include "display.h"
 
+enum Mode : uint8_t {
+    IMAGE, VIDEO
+};
+
 int main()
 {
+    Mode mode = IMAGE;
+
     // Create an image calibrator from
     //     - chessboard images (if not done the calibrator before), OR
     //     - a yaml file, where the calibration values have been saved
@@ -30,8 +36,12 @@ int main()
     }
 
     // Read images / video
-    // std::vector<cv::Mat> images = read_images("../data/test_images");
-    std::vector<cv::Mat> images = read_video_frames("../data/project_video.mp4");
+    std::vector<cv::Mat> images;
+    if (mode == IMAGE) {
+        images = read_images("../data/test_images");
+    } else {
+        images = read_video_frames("../data/project_video.mp4");
+    }
 
     // Moving average
     CoeffMoveAvg left_mov_avg{10}, right_mov_avg{10};
@@ -83,8 +93,11 @@ int main()
         }
 
         // Smoothen
-        left_coeff = left_mov_avg.update(left_coeff);
-        right_coeff = right_mov_avg.update(right_coeff);
+        if (mode == VIDEO)
+        {
+            left_coeff = left_mov_avg.update(left_coeff);
+            right_coeff = right_mov_avg.update(right_coeff);
+        }
 
         // Generate line points on BEV
         lpoints_bev = generate_line_points(bev_img.size(), left_coeff);
