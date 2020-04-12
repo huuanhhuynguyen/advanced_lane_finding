@@ -59,8 +59,8 @@ int main()
 
         // Uncomment to visualize lane points on BEV image
         // cv::Mat bev_img_color = bev_img.clone();
-        // draw_points(bev_img_color, lpoints_bev, cv::Scalar(255, 0, 0));
-        // draw_points(bev_img_color, rpoints_bev, cv::Scalar(0, 255, 0));
+        // draw_points(bev_img_color, lpoints_bev, cv::Scalar(0, 0, 255));
+        // draw_points(bev_img_color, rpoints_bev, cv::Scalar(255, 0, 0));
         // display(bev_img_color);
 
         // Fit points with second polynomial order
@@ -95,19 +95,21 @@ int main()
             curvature = calculate_curvature(coeff_left, coeff_right);
         }
 
-        // Warp the detected lane boundaries back to original image
-        cv::Mat lane_img = cv::Mat(image.size(), image.depth(), double(0));
-        std::vector<cv::Point2i> lane_points = lpoints;
+        // Visualize lane
+        auto vis_image = image.clone();
+        std::vector<cv::Point2i> lane_points(lpoints.size());
+        std::reverse_copy(lpoints.begin(), lpoints.end(), lane_points.begin());
         lane_points.insert(lane_points.end(), rpoints.begin(), rpoints.end());
-        //cv::fillPoly(lane_img, lane_points, cv::Scalar(0, 255, 0, 0.5));
-        draw_points(lane_img, lpoints, cv::Scalar(255, 0, 0));
-        draw_points(lane_img, rpoints, cv::Scalar(0, 255, 0));
-        display(lane_img);
+        draw_polygon(vis_image, lane_points);
 
-        // Visualize lane, boundaries, curvature, center offset
+        // Draw lane boundaries
+        draw_curve(vis_image, lpoints, cv::Scalar(0, 0, 255));
+        draw_curve(vis_image, rpoints, cv::Scalar(255, 0, 0));
+
+        // Visualize curvature and offset
 
         // Display the image
-        //display(rect_img);
+        display(vis_image);
     }
 
     return 0;
