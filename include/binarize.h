@@ -21,7 +21,6 @@ cv::Mat hsv_yellow_mask(const cv::Mat& image)
     cv::Mat mask = mask_H & mask_S & mask_V;
     mask.convertTo(mask, image.depth());
 
-    // display(mask);
     return mask;
 }
 
@@ -51,18 +50,21 @@ cv::Mat binarize(const cv::Mat& image)
     {
         const auto mask = hsv_yellow_mask(image);
         bin_img = bin_img | mask;
+        // display(mask);
     }
 
     // highlight white lines by thresholding the equalized frame
     {
         const auto mask = gray_white_mask(image);
         bin_img = bin_img | mask;
+        // display(mask);
     }
 
     // apply (rectangular closing) morphological transformation
     {
         const auto kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
         cv::morphologyEx(bin_img, bin_img, cv::MORPH_CLOSE, kernel);
+        // display(bin_img);
     }
 
     return bin_img;

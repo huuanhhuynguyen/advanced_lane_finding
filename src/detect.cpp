@@ -2,15 +2,15 @@
 
 namespace
 {
-    struct ImgBar {
-        cv::Mat img_data;
+    /// Struct represents an image bar at y position.
+    struct Bar {
+        cv::Mat image;
         int y;
-        int cols() const { return img_data.cols; }
     };
 
-    std::vector<ImgBar> _split_into_bars(const cv::Mat& img, int n_bars)
+    std::vector<Bar> _split_into_bars(const cv::Mat& img, int n_bars)
     {
-        std::vector<ImgBar> bars;
+        std::vector<Bar> bars;
         const int n_rows_per_bar = int(float(img.rows) / float(n_bars));
         for (int i = 0; i < n_bars; ++i)
         {
@@ -19,8 +19,8 @@ namespace
             int end = std::min(start + n_rows_per_bar, img.rows);
 
             // extract the bar from the image
-            ImgBar bar;
-            bar.img_data = img.rowRange(start, end);
+            Bar bar;
+            bar.image = img.rowRange(start, end);
             bar.y = int((start+end) / 2);
 
             bars.push_back(bar);
@@ -42,7 +42,7 @@ std::vector<cv::Point2i> detect_lane_points(const cv::Mat& bin_img)
 
     // split the binary image into horizontal bars
     const int n_bars = 10;
-    std::vector<ImgBar> bars = _split_into_bars(bin_img, n_bars);
+    std::vector<Bar> bars = _split_into_bars(bin_img, n_bars);
 
     struct Sum {
         int x;
@@ -50,7 +50,7 @@ std::vector<cv::Point2i> detect_lane_points(const cv::Mat& bin_img)
         Sum(int x_, int value_) : x{x_}, value{value_} {}
     };
     const int n_windows = 20;
-    const int win_cols = int(bars[0].cols() / n_windows);
+    const int win_cols = int(bars[0].image.cols / n_windows);
     for (const auto& bar : bars)
     {
         std::vector<Sum> sums;
@@ -58,14 +58,15 @@ std::vector<cv::Point2i> detect_lane_points(const cv::Mat& bin_img)
         {
             // find start and end column of the window
             int start = i * win_cols;
-            int end = std::min(start + win_cols, bar.cols());
-            cv::Mat window = bar.img_data.colRange(start, end);
+            int end = std::min(start + win_cols, bar.image.cols);
+            cv::Mat window = bar.image.colRange(start, end);
             // calculate sum of all pixels in window
             int sum = cv::sum(window)[0];
             // save sum and x-coordinate of the window
             int x = int((start + end) / 2);
             sums.emplace_back(x, sum);
         }
+
         // find window with max sum, it is the lane point
         auto max_sum = std::max_element(sums.begin(), sums.end(),
                 [](const auto& lhs, const auto& rhs){ return lhs.value < rhs.value; });

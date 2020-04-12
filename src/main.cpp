@@ -102,7 +102,7 @@ int main()
         }
 
         // Visualize lane
-        auto vis_image = image.clone();
+        auto vis_image = undistorted_img.clone();
         std::vector<cv::Point2i> lane_points(lpoints.size());
         std::reverse_copy(lpoints.begin(), lpoints.end(), lane_points.begin());
         lane_points.insert(lane_points.end(), rpoints.begin(), rpoints.end());

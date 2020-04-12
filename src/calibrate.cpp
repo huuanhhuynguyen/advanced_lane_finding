@@ -29,9 +29,11 @@ void ChessboardCalibrator::read_calib_images(const std::vector<cv::Mat> &images)
 
     // Init 3D chessboard points (0, 0, 0), (0, 1, 0), ..., (8, 5, 0)
     std::vector<cv::Point3f> obj_p;
-    for(int y = 0; y < 6; ++y)
-        for(int x = 0; x < 9; ++x)
+    for(int y = 0; y < 6; ++y) {
+        for(int x = 0; x < 9; ++x) {
             obj_p.emplace_back(x, y, 0);
+        }
+    }
 
     for (const auto& image: images)
     {

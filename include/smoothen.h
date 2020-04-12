@@ -15,24 +15,24 @@
 template <typename T>
 class MovAvg {
 public:
-    explicit constexpr MovAvg(unsigned int window = 5) : _window{window} {}
+    explicit constexpr MovAvg(unsigned int window_ = 5) : window{window_} {}
 
     /// update history and return the moving-averaged value
     constexpr T update(const T& number) const noexcept
     {
-        if (_prevs.size() >= _window)
+        if (prevs.size() >= window)
         {
-            _prevs.pop_front();
+            prevs.pop_front();
         }
-        _prevs.push_back(number);
-        const auto sum = std::accumulate(_prevs.begin(), _prevs.end(), 0.0);
-        const auto mean = sum / _prevs.size();
+        prevs.push_back(number);
+        const auto sum = std::accumulate(prevs.begin(), prevs.end(), 0.0);
+        const auto mean = sum / prevs.size();
         return static_cast<T>(mean);
     }
 
 private:
-    mutable std::deque<T> _prevs;
-    const unsigned int _window;
+    mutable std::deque<T> prevs;
+    const unsigned int window;
 };
 
 /// Calculates moving-averaged line (i.e. moving averaged slope and bias).
@@ -44,8 +44,8 @@ private:
 ///    mov_avg.update(Coefficient(2.5, -5, 3)); // returns a = 1.0, b = -1.0, c = 2.0
 class CoeffMoveAvg {
 public:
-    explicit constexpr CoeffMoveAvg(unsigned int window = 5) :
-            _window{window}, first{window}, second{window}, third{window} {}
+    explicit constexpr CoeffMoveAvg(unsigned int window_ = 5) :
+            window{window_}, first{window_}, second{window_}, third{window_} {}
 
     /// update history and return the moving-averaged line
     Coefficient update(const Coefficient& coeff) const noexcept
@@ -60,7 +60,7 @@ private:
     MovAvg<float> first;
     MovAvg<float> second;
     MovAvg<float> third;
-    const unsigned int _window;
+    const unsigned int window;
 };
 
 #endif //BASIC_LANE_FINDING_CPP_SMOOTHEN_H

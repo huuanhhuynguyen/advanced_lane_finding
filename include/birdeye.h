@@ -21,14 +21,6 @@ public:
         return warped;
     }
 
-    cv::Mat unwarp(const cv::Mat& image) const
-    {
-
-        cv::Mat unwarped;
-        cv::warpPerspective(image, unwarped, M_unwarp, img_size);
-        return unwarped;
-    }
-
     std::vector<cv::Point2i> unwarp_points(const std::vector<cv::Point2i>& points)
     {
         std::vector<cv::Point2f> points_f;
@@ -45,6 +37,7 @@ public:
 private:
     std::vector<cv::Point2f> src, dst;
     cv::Size img_size;
+
     // perspective matrices
     cv::Mat M_warp;
     cv::Mat M_unwarp;
