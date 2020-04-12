@@ -26,7 +26,8 @@ int main()
     }
 
     // Read images / video
-    std::vector<cv::Mat> images = read_images("../data/test_images");
+    //std::vector<cv::Mat> images = read_images("../data/test_images");
+    std::vector<cv::Mat> images = read_video_frames("../data/project_video.mp4");
 
     // for every image/frame
     for (const auto& image : images)
@@ -82,7 +83,7 @@ int main()
         lpoints_bev = generate_line_points(bev_img.size(), coeff_left);
         rpoints_bev = generate_line_points(bev_img.size(), coeff_right);
 
-        // Get two bottom points on the original image
+        // Unwarp bev points to original image
         std::vector<cv::Point2i> lpoints = bev.unwarp_points(lpoints_bev);
         std::vector<cv::Point2i> rpoints = bev.unwarp_points(rpoints_bev);
 
