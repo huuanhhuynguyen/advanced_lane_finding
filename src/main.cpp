@@ -112,8 +112,6 @@ int main()
         draw_curve(vis_image, lpoints, cv::Scalar(0, 0, 255));
         draw_curve(vis_image, rpoints, cv::Scalar(255, 0, 0));
 
-        // TODO Visualize curvature and offset
-
         // Visualize binary image
         {
             cv::Mat small_img;
@@ -134,6 +132,24 @@ int main()
             cv::Mat small_img;
             cv::resize(bev_img_color, small_img, bev_img_color.size() / 5);
             overlay(small_img, vis_image, 10*3 + small_img.cols*2, 10);
+        }
+        // Visualize offset
+        {
+            std::ostringstream stream;
+            stream << "offset = " << std::to_string(offset) << " m";
+            std::string text = stream.str();
+            cv::putText(vis_image, text, cv::Point2i(1000, 30),
+                        cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8,
+                        cv::Scalar(200,200,250));
+        }
+        // Visualize curvature
+        {
+            std::ostringstream stream;
+            stream << "curvature = " << std::to_string(curvature) << "m";
+            std::string text = stream.str();
+            cv::putText(vis_image, text, cv::Point2i(1000, 60),
+                        cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8,
+                        cv::Scalar(200,200,250));
         }
 
         // Display the image
