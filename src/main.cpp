@@ -10,7 +10,7 @@
 #include "smoothen.h"
 #include "generate.h"
 #include "offset.h"
-#include "curvature.h"
+#include "radius.h"
 #include "display.h"
 
 int main()
@@ -92,13 +92,15 @@ int main()
         std::vector<cv::Point2i> lpoints = bev.unwarp_points(lpoints_bev);
         std::vector<cv::Point2i> rpoints = bev.unwarp_points(rpoints_bev);
 
-        // Calculate curvature and vehicle offset from the lane center
-        float offset, curvature;
+        // Calculate curve radius and vehicle offset from the lane center
+        float offset, radius;
         {
             int ego_x = bin_img.cols / 2;
             int bottom_mid_x = (lpoints[0].x + rpoints[0].x) / 2;
             offset = calculate_offset_in_meter(ego_x, bottom_mid_x);
-            curvature = calculate_curvature(left_coeff, right_coeff);
+            float radius_left = calculate_curve_radius(left_coeff);
+            float radius_right = calculate_curve_radius(right_coeff);
+            radius = (radius_left + radius_right) / 2;
         }
 
         // Visualize lane
@@ -136,20 +138,20 @@ int main()
         // Visualize offset
         {
             std::ostringstream stream;
-            stream << "offset = " << std::to_string(offset) << " m";
+            stream << "Center offset = " << std::to_string(offset) << " m";
             std::string text = stream.str();
-            cv::putText(vis_image, text, cv::Point2i(1000, 30),
+            cv::putText(vis_image, text, cv::Point2i(900, 30),
                         cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8,
-                        cv::Scalar(200,200,250));
+                        cv::Scalar(220,220,250));
         }
-        // Visualize curvature
+        // Visualize curve radius
         {
             std::ostringstream stream;
-            stream << "curvature = " << std::to_string(curvature) << "m";
+            stream << "Curve radius = " << std::to_string(radius) << "m";
             std::string text = stream.str();
-            cv::putText(vis_image, text, cv::Point2i(1000, 60),
+            cv::putText(vis_image, text, cv::Point2i(900, 60),
                         cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8,
-                        cv::Scalar(200,200,250));
+                        cv::Scalar(220,220,250));
         }
 
         // Display the image
