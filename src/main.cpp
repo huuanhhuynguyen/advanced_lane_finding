@@ -28,7 +28,7 @@ int main()
     }
 
     // Read images / video
-    //std::vector<cv::Mat> images = read_images("../data/test_images");
+    // std::vector<cv::Mat> images = read_images("../data/test_images");
     std::vector<cv::Mat> images = read_video_frames("../data/project_video.mp4");
 
     // Moving average
@@ -120,12 +120,14 @@ int main()
             cv::resize(bin_img, small_img, bin_img.size() / 5);
             overlay(small_img, vis_image, 10, 10);
         }
+
         // Visualize bev image
         {
             cv::Mat small_img;
             cv::resize(bev_img, small_img, bev_img.size() / 5);
             overlay(small_img, vis_image, 10*2 + small_img.cols, 10);
         }
+
         // Visualize bev image with detected points
         {
             cv::Mat bev_img_color = bev_img.clone();
@@ -135,6 +137,7 @@ int main()
             cv::resize(bev_img_color, small_img, bev_img_color.size() / 5);
             overlay(small_img, vis_image, 10*3 + small_img.cols*2, 10);
         }
+
         // Visualize offset
         {
             std::ostringstream stream;
@@ -144,6 +147,7 @@ int main()
                         cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8,
                         cv::Scalar(220,220,250));
         }
+
         // Visualize curve radius
         {
             std::ostringstream stream;
