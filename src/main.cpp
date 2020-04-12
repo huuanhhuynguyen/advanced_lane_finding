@@ -1,3 +1,5 @@
+#include <iomanip>
+
 #include "read.h"
 #include "calibrate.h"
 #include "binarize.h"
@@ -141,7 +143,7 @@ int main()
         // Visualize offset
         {
             std::ostringstream stream;
-            stream << "Center offset = " << std::to_string(offset) << " m";
+            stream << "Center offset = " << std::fixed << std::setprecision(3) << offset << " m";
             std::string text = stream.str();
             cv::putText(vis_image, text, cv::Point2i(900, 30),
                         cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8,
@@ -151,7 +153,7 @@ int main()
         // Visualize curve radius
         {
             std::ostringstream stream;
-            stream << "Curve radius = " << std::to_string(radius) << "m";
+            stream << "Curve radius = " <<  std::fixed << std::setprecision(1) << radius << " m";
             std::string text = stream.str();
             cv::putText(vis_image, text, cv::Point2i(900, 60),
                         cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8,
