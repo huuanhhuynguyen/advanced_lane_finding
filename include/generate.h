@@ -3,10 +3,10 @@
 
 #include <vector>
 #include "opencv2/core.hpp"
-#include "curve.h"
+#include "coefficient.h"
 
 std::vector<cv::Point2i> generate_line_points(const cv::Size& img_size,
-                                              const SecondPolynomial& curve,
+                                              const Coefficient& coeff,
                                               int n_points=40)
 {
     std::vector<cv::Point2i> line_points;
@@ -14,7 +14,7 @@ std::vector<cv::Point2i> generate_line_points(const cv::Size& img_size,
     for (int i = 0; i < n_points; ++i)
     {
         float y = float(i) * dy;
-        float x = curve.a * y * y + curve.b * y + curve.c;
+        float x = coeff.a * y * y + coeff.b * y + coeff.c;
         line_points.emplace_back(int(x), int(y));
     }
     return line_points;

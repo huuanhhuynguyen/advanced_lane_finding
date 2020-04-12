@@ -5,7 +5,7 @@
 #include "detect.h"
 #include "translate.h"
 #include "draw.h"
-#include "curve.h"
+#include "coefficient.h"
 #include "polyfit.h"
 #include "smoothen.h"
 #include "generate.h"
@@ -32,7 +32,7 @@ int main()
     std::vector<cv::Mat> images = read_video_frames("../data/project_video.mp4");
 
     // Moving average
-    CurveMoveAvg left_mov_avg{10}, right_mov_avg{10};
+    CoeffMoveAvg left_mov_avg{10}, right_mov_avg{10};
 
     // for every image/frame
     for (const auto& image : images)
@@ -70,29 +70,29 @@ int main()
         // display(bev_img_color);
 
         // Fit points with second polynomial order
-        SecondPolynomial left_polyn, right_polyn;
+        Coefficient left_coeff, right_coeff;
         {
             std::vector<float> xs, ys;
             std::transform(lpoints_bev.begin(), lpoints_bev.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
             std::transform(lpoints_bev.begin(), lpoints_bev.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
             std::vector<float> coeffs = polyfit_boost(ys, xs, 2);
-            left_polyn = SecondPolynomial(coeffs[2], coeffs[1], coeffs[0]);
+            left_coeff = Coefficient(coeffs[2], coeffs[1], coeffs[0]);
         }
         {
             std::vector<float> xs, ys;
             std::transform(rpoints_bev.begin(), rpoints_bev.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
             std::transform(rpoints_bev.begin(), rpoints_bev.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
             std::vector<float> coeffs = polyfit_boost(ys, xs, 2);
-            right_polyn = SecondPolynomial(coeffs[2], coeffs[1], coeffs[0]);
+            right_coeff = Coefficient(coeffs[2], coeffs[1], coeffs[0]);
         }
 
         // Smoothen
-        left_polyn = left_mov_avg.update(left_polyn);
-        right_polyn = right_mov_avg.update(right_polyn);
+        left_coeff = left_mov_avg.update(left_coeff);
+        right_coeff = right_mov_avg.update(right_coeff);
 
         // Generate line points on BEV
-        lpoints_bev = generate_line_points(bev_img.size(), left_polyn);
-        rpoints_bev = generate_line_points(bev_img.size(), right_polyn);
+        lpoints_bev = generate_line_points(bev_img.size(), left_coeff);
+        rpoints_bev = generate_line_points(bev_img.size(), right_coeff);
 
         // Unwarp bev points to original image
         std::vector<cv::Point2i> lpoints = bev.unwarp_points(lpoints_bev);
@@ -104,10 +104,8 @@ int main()
             int ego_x = bin_img.cols / 2;
             int bottom_mid_x = (lpoints[0].x + rpoints[0].x) / 2;
             offset = calculate_offset_in_meter(ego_x, bottom_mid_x);
-            curvature = calculate_curvature(left_polyn, right_polyn);
+            curvature = calculate_curvature(left_coeff, right_coeff);
         }
-
-        //TODO make naming of curve, 2ndpolynomial, etc. consistent
 
         // Visualize lane
         auto vis_image = image.clone();
