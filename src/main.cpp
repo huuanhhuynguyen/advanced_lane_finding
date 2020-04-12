@@ -58,10 +58,9 @@ int main()
         }
 
         // Uncomment to visualize lane points on BEV image
-        // cv::Mat bev_img_color;
-        // cv::cvtColor(bev_img, bev_img_color, cv::COLOR_GRAY2BGR);
-        // draw_points(bev_img_color, left_points, cv::Scalar(255, 0, 0));
-        // draw_points(bev_img_color, right_points, cv::Scalar(0, 255, 0));
+        // cv::Mat bev_img_color = bev_img.clone();
+        // draw_points(bev_img_color, lpoints_bev, cv::Scalar(255, 0, 0));
+        // draw_points(bev_img_color, rpoints_bev, cv::Scalar(0, 255, 0));
         // display(bev_img_color);
 
         // Fit points with second polynomial order
@@ -88,12 +87,22 @@ int main()
         std::vector<cv::Point2i> rpoints = bev.unwarp_points(rpoints_bev);
 
         // Calculate curvature and vehicle offset from the lane center
-        int ego_x = bin_img.cols / 2;
-        int bottom_mid_x = (lpoints[0].x + rpoints[0].x) / 2;
-        float offset = calculate_offset_in_meter(ego_x, bottom_mid_x);
-        float curvature = calculate_curvature(coeff_left, coeff_right);
+        float offset, curvature;
+        {
+            int ego_x = bin_img.cols / 2;
+            int bottom_mid_x = (lpoints[0].x + rpoints[0].x) / 2;
+            offset = calculate_offset_in_meter(ego_x, bottom_mid_x);
+            curvature = calculate_curvature(coeff_left, coeff_right);
+        }
 
         // Warp the detected lane boundaries back to original image
+        cv::Mat lane_img = cv::Mat(image.size(), image.depth(), double(0));
+        std::vector<cv::Point2i> lane_points = lpoints;
+        lane_points.insert(lane_points.end(), rpoints.begin(), rpoints.end());
+        //cv::fillPoly(lane_img, lane_points, cv::Scalar(0, 255, 0, 0.5));
+        draw_points(lane_img, lpoints, cv::Scalar(255, 0, 0));
+        draw_points(lane_img, rpoints, cv::Scalar(0, 255, 0));
+        display(lane_img);
 
         // Visualize lane, boundaries, curvature, center offset
 

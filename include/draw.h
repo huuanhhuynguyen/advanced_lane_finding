@@ -6,9 +6,12 @@
 void draw_points(cv::Mat& img, const std::vector<cv::Point2i>& points,
                  const cv::Scalar& color)
 {
-    for (const auto& point : points)
-    {
-        cv::circle(img, point, 15, color, -1);
+    if (img.channels() == 1) {
+        cv::cvtColor(img, img, cv::COLOR_GRAY2BGR);
+    }
+
+    for (const auto& point : points) {
+        cv::circle(img, point, /*radius=*/10, color, /*thickness=*/-1);
     }
 }
 
