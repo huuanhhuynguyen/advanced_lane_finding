@@ -3,26 +3,21 @@
 
 #include "opencv2/imgproc.hpp"
 
-class BEV {
+class BEVWarper {
 public:
-    explicit BEV(const cv::Mat& image)
+    explicit BEVWarper(const cv::Size& sz) : img_size{sz}
     {
-        h = float(image.rows);
-        w = float(image.cols);
-        _src = {
-                {w, h-10}, {0, h-10}, {546, 460}, {732, 460}
-        };
-        _dst = {
-                {w, h}, {0, h}, {0, 0}, {w, 0}
-        };
-        M = cv::getPerspectiveTransform(_src, _dst);
-        uM = cv::getPerspectiveTransform(_dst, _src);
+        float h = img_size.height, w = img_size.width;
+        src = { {w, h-10}, {0, h-10}, {546, 460}, {732, 460} };
+        dst = { {w, h}, {0, h}, {0, 0}, {w, 0} };
+        M_warp = cv::getPerspectiveTransform(src, dst);
+        M_unwarp = cv::getPerspectiveTransform(dst, src);
     }
 
     cv::Mat warp(const cv::Mat& image) const
     {
         cv::Mat warped;
-        cv::warpPerspective(image, warped, M, image.size());
+        cv::warpPerspective(image, warped, M_warp, img_size);
         return warped;
     }
 
@@ -30,7 +25,7 @@ public:
     {
 
         cv::Mat unwarped;
-        cv::warpPerspective(image, unwarped, uM, image.size());
+        cv::warpPerspective(image, unwarped, M_unwarp, img_size);
         return unwarped;
     }
 
@@ -40,7 +35,7 @@ public:
         std::copy(points.begin(), points.end(), std::back_inserter(points_f));
 
         std::vector<cv::Point2f> unwarped_points;
-        cv::perspectiveTransform(points_f, unwarped_points, uM);
+        cv::perspectiveTransform(points_f, unwarped_points, M_unwarp);
 
         std::vector<cv::Point2i> unwarped_points_i;
         std::copy(unwarped_points.begin(), unwarped_points.end(), std::back_inserter(unwarped_points_i));
@@ -48,10 +43,11 @@ public:
     }
 
 private:
-    std::vector<cv::Point2f> _src, _dst;
-    float h, w;
-    cv::Mat M;  // perspective matrix
-    cv::Mat uM; // unwarping perspective matrix
+    std::vector<cv::Point2f> src, dst;
+    cv::Size img_size;
+    // perspective matrices
+    cv::Mat M_warp;
+    cv::Mat M_unwarp;
 };
 
 #endif //LANE_FINDING_ADVANCED_CPP_BIRDEYE_H

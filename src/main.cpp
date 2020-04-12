@@ -3,6 +3,7 @@
 #include "binarize.h"
 #include "birdeye.h"
 #include "detect.h"
+#include "translate.h"
 #include "draw.h"
 #include "polyfit.h"
 #include "generate.h"
@@ -37,27 +38,23 @@ int main()
         const auto bin_img = binarize(undistorted_img);
 
         // Warp image to BEV
-        BEV bev(bin_img);
+        BEVWarper bev(bin_img.size());
         const auto bev_img = bev.warp(bin_img);
 
-        // Split image into two
-        cv::Mat left_img, right_img;
-        split_image_left_right(bev_img, left_img, right_img);
-
-        // Detect points of the left and right lanes on BEV
-        std::vector<cv::Point2i> left_points, right_points;
+        // Detect lane points on BEV
+        std::vector<cv::Point2i> lpoints_bev, rpoints_bev;
         {
-            // left points on the left image, which have the same coordinates
-            // as on the original BEV image before splitting.
-            left_points = detect_lane_points(left_img);
-            // right points on the right image
+            // Split image into two
+            cv::Mat left_img, right_img;
+            split_image_left_right(bev_img, left_img, right_img);
+
+            // detect points on each half image
+            lpoints_bev = detect_lane_points(left_img);
+
             std::vector<cv::Point2i> rpoints = detect_lane_points(right_img);
-            // adjust the right points to the original BEV image
+            // adjust the right points to the original BEV
             int mid = int(bev_img.cols / 2);
-            auto translate_x = [mid](const cv::Point2i& point){
-                return cv::Point2i(point.x+mid, point.y); };
-            std::transform(rpoints.begin(), rpoints.end(),
-                           std::back_inserter(right_points), translate_x);
+            rpoints_bev = translate(rpoints, mid, 0);
         }
 
         // Uncomment to visualize lane points on BEV image
@@ -71,30 +68,29 @@ int main()
         std::vector<float> coeff_left, coeff_right;
         {
             std::vector<float> xs, ys;
-            std::transform(left_points.begin(), left_points.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
-            std::transform(left_points.begin(), left_points.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
+            std::transform(lpoints_bev.begin(), lpoints_bev.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
+            std::transform(lpoints_bev.begin(), lpoints_bev.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
             coeff_left = polyfit_boost(ys, xs, 2);
         }
         {
             std::vector<float> xs, ys;
-            std::transform(right_points.begin(), right_points.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
-            std::transform(right_points.begin(), right_points.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
+            std::transform(rpoints_bev.begin(), rpoints_bev.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
+            std::transform(rpoints_bev.begin(), rpoints_bev.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
             coeff_right = polyfit_boost(ys, xs, 2);
         }
 
         // Generate line points on BEV
-        left_points = generate_line_points(bev_img.size(), coeff_left);
-        right_points = generate_line_points(bev_img.size(), coeff_right);
-
-        //TODO rename variables to avoid confusion
+        lpoints_bev = generate_line_points(bev_img.size(), coeff_left);
+        rpoints_bev = generate_line_points(bev_img.size(), coeff_right);
 
         // Get two bottom points on the original image
-        std::vector<cv::Point2i> lpoints = bev.unwarp_points(left_points);
-        std::vector<cv::Point2i> rpoints = bev.unwarp_points(right_points);
+        std::vector<cv::Point2i> lpoints = bev.unwarp_points(lpoints_bev);
+        std::vector<cv::Point2i> rpoints = bev.unwarp_points(rpoints_bev);
 
         // Calculate curvature and vehicle offset from the lane center
-        int vehicle_y = int(bin_img.cols / 2);
-        float offset = calculate_offset_from_center(vehicle_y, lpoints[0].x, rpoints[0].x);
+        int ego_x = bin_img.cols / 2;
+        int bottom_mid_x = (lpoints[0].x + rpoints[0].x) / 2;
+        float offset = calculate_offset_in_meter(ego_x, bottom_mid_x);
         float curvature = calculate_curvature(coeff_left, coeff_right);
 
         // Warp the detected lane boundaries back to original image
