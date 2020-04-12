@@ -5,7 +5,7 @@
 
 class BEVWarper {
 public:
-    explicit BEVWarper(const cv::Size& sz) : img_size{sz}
+    explicit BEVWarper(cv::Size sz) : img_size{std::move(sz)}
     {
         float h = img_size.height, w = img_size.width;
         src = { {w, h-10}, {0, h-10}, {546, 460}, {732, 460} };
