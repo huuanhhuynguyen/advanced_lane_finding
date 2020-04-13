@@ -21,7 +21,7 @@ enum Mode : uint8_t {
 
 int main()
 {
-    Mode mode = IMAGE;
+    Mode mode = VIDEO;
 
     // Create an image calibrator from
     //     - chessboard images (if not done the calibrator before), OR
