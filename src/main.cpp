@@ -40,7 +40,7 @@ int main()
     if (mode == IMAGE) {
         images = read_images("../data/test_images");
     } else {
-        images = read_video_frames("../data/project_video.mp4");
+        images = read_video_frames("../data/video.mp4");
     }
 
     // Moving average

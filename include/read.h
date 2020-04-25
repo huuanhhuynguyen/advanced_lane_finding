@@ -3,11 +3,12 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_set>
 #include <opencv2/highgui/highgui.hpp>
 #include <boost/filesystem.hpp>
 
-/// list all files in a directory
-/// source: www.martinbroadhurst.com/list-the-files-in-a-directory-in-c.html
+/// list files in a directory
+/// Based on: www.martinbroadhurst.com/list-the-files-in-a-directory-in-c.html
 std::vector<std::string> list_dir(const std::string& directory)
 {
     std::vector<std::string> result;
@@ -18,6 +19,14 @@ std::vector<std::string> list_dir(const std::string& directory)
 
     auto path_leaf_string = [](const auto& entry){ return entry.path().string(); };
     std::transform(start, end, std::back_inserter(result), path_leaf_string);
+
+    // white-listing (might use Regex for a more flexible extension matching)
+    const std::unordered_set<std::string> k_extensions {"png", "jpg"};
+    auto invalid_extension = [&k_extensions](const auto& path){
+      auto ext = path.substr(path.length() - 3);
+      return k_extensions.find(ext) == k_extensions.end();
+    };
+    result.erase(std::remove_if(result.begin(), result.end(), invalid_extension), result.end());
 
     return result;
 }
