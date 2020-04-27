@@ -11,7 +11,7 @@ alt="circuit" width="240" height="180" border="10" /></a>
 1. Clone this repo.
 2. Make a build directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
-4. Run it: `./basic_lane_finding_cpp `
+4. Run it: `./lane_finding_advanced_cpp`
 
 ## Implementation
 The implementation can be seen in `src/main.cpp` with the following steps:
