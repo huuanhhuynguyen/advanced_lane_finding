@@ -1,6 +1,8 @@
 # Advanced Lane Finding
 
-This project is just a self-learning experience by implementing in C++14 an algorithm similar to this   [Udacity project](https://github.com/ndrplz/self-driving-car/tree/master/project_4_advanced_lane_finding).
+This project is just a self-learning experience by implementing in C++14 an 
+algorithm similar to this 
+[Udacity project](https://github.com/ndrplz/self-driving-car/tree/master/project_4_advanced_lane_finding).
 
 Demo on straight road [videoclip](https://www.youtube.com/watch?v=4fW9n5syoqE):
 
@@ -8,13 +10,18 @@ Demo on straight road [videoclip](https://www.youtube.com/watch?v=4fW9n5syoqE):
 alt="circuit" width="240" height="180" border="10" /></a>
 
 ## Basic Build Instructions
+
+We first need to install OpenCV C++ and have Boost. After that,
+
 1. Clone this repo.
 2. Make a build directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
 4. Run it: `./lane_finding_advanced_cpp`
 
-## Implementation
+## Explanation
+
 The implementation can be seen in `src/main.cpp` with the following steps:
+
 1. Undistort the camera image.
 
 2. Binarize the image to black white where the yellow and white lines of the road are highlighted.
