@@ -6,7 +6,7 @@ algorithm similar to this
 
 Demo on straight road [videoclip](https://www.youtube.com/watch?v=4fW9n5syoqE):
 
-<a href="https://www.youtube.com/watch?v=4fW9n5syoqE" target="_blank"><img src="https://img.youtube.com/vi/4fW9n5syoqE/0.jpg" 
+<a href="https://www.youtube.com/watch?v=4fW9n5syoqE" target="_blank"><img src="./data/thumbnail.gif" 
 alt="circuit" width="240" height="180" border="10" /></a>
 
 ## Basic Build Instructions
