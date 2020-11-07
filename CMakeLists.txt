@@ -4,9 +4,9 @@ set(THIS lane_finding_advanced_cpp)
 project(${THIS})
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(include)
+include_directories(src)
 
-file(GLOB HEADERS include/*.h)
+file(GLOB HEADERS src/*.h)
 file(GLOB SOURCES src/*.cpp)
 add_executable(${THIS} ${HEADERS} ${SOURCES})
 

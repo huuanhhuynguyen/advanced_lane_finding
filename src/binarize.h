@@ -37,7 +37,7 @@ cv::Mat gray_white_mask(const cv::Mat& image)
     // Mask for the white color
     cv::Mat mask;
     cv::threshold(equalized_gray, mask, /*thresh=*/252,
-                  /*maxval=*/ 255, cv::THRESH_BINARY);
+                  /*maxval=*/255, cv::THRESH_BINARY);
 
     return mask;
 }
