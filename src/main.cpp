@@ -56,7 +56,7 @@ int main()
         const auto bin_img = binarize(undistorted_img);
 
         // Warp image to BEV
-        BEVWarper bev(bin_img.size());
+        BEVWarper bev { bin_img.size() };
         const auto bev_img = bev.warp(bin_img);
 
         // Detect lane points on BEV
@@ -79,15 +79,15 @@ int main()
         Coefficient left_coeff, right_coeff;
         {
             std::vector<float> xs, ys;
-            std::transform(lpoints_bev.begin(), lpoints_bev.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
-            std::transform(lpoints_bev.begin(), lpoints_bev.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
+            std::transform(lpoints_bev.begin(), lpoints_bev.end(), std::back_inserter(xs), [](const auto& p){ return p.x; });
+            std::transform(lpoints_bev.begin(), lpoints_bev.end(), std::back_inserter(ys), [](const auto& p){ return p.y; });
             std::vector<float> coeffs = polyfit_boost(ys, xs, 2);
             left_coeff = Coefficient(coeffs[2], coeffs[1], coeffs[0]);
         }
         {
             std::vector<float> xs, ys;
-            std::transform(rpoints_bev.begin(), rpoints_bev.end(), std::back_inserter(xs), [](auto& p){ return p.x; });
-            std::transform(rpoints_bev.begin(), rpoints_bev.end(), std::back_inserter(ys), [](auto& p){ return p.y; });
+            std::transform(rpoints_bev.begin(), rpoints_bev.end(), std::back_inserter(xs), [](const auto& p){ return p.x; });
+            std::transform(rpoints_bev.begin(), rpoints_bev.end(), std::back_inserter(ys), [](const auto& p){ return p.y; });
             std::vector<float> coeffs = polyfit_boost(ys, xs, 2);
             right_coeff = Coefficient(coeffs[2], coeffs[1], coeffs[0]);
         }

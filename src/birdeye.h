@@ -5,14 +5,19 @@
 
 class BEVWarper {
 public:
-    explicit BEVWarper(cv::Size sz) : img_size{std::move(sz)}
-    {
-        float h = img_size.height, w = img_size.width;
-        src = { {w, h-10}, {0, h-10}, {546, 460}, {732, 460} };
-        dst = { {w, h}, {0, h}, {0, 0}, {w, 0} };
-        M_warp = cv::getPerspectiveTransform(src, dst);
-        M_unwarp = cv::getPerspectiveTransform(dst, src);
-    }
+    explicit BEVWarper(const cv::Size& sz) :
+        img_size{sz},
+        src { {float(sz.width), float(sz.height)-10},
+              {0, float(sz.height)-10},
+              {546, 460},
+              {732, 460} },
+        dst { {float(sz.width), float(sz.height)},
+              {0, float(sz.height)},
+              {0, 0},
+              {float(sz.width), 0} },
+        M_warp   { cv::getPerspectiveTransform(src, dst) },
+        M_unwarp { cv::getPerspectiveTransform(dst, src) }
+    {}
 
     cv::Mat warp(const cv::Mat& image) const
     {
@@ -35,8 +40,8 @@ public:
     }
 
 private:
-    std::vector<cv::Point2f> src, dst;
     cv::Size img_size;
+    std::vector<cv::Point2f> src, dst;
 
     // perspective matrices
     cv::Mat M_warp;
