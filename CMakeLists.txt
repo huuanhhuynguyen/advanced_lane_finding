@@ -17,3 +17,6 @@ target_link_libraries(${THIS} ${OpenCV_LIBS})
 # Boost needs to be installed
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 target_link_libraries(${THIS} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+
+# Enable compiler warnings as errors
+target_compile_options(${THIS} PRIVATE -Werror -Wall -Wextra)

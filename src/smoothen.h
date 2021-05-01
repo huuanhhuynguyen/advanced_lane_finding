@@ -45,7 +45,7 @@ private:
 class CoeffMoveAvg {
 public:
     explicit constexpr CoeffMoveAvg(unsigned int window_ = 5) :
-            window{window_}, first{window_}, second{window_}, third{window_} {}
+            first{window_}, second{window_}, third{window_}, window{window_} {}
 
     /// update history and return the moving-averaged line
     Coefficient update(const Coefficient& coeff) const noexcept

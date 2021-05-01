@@ -24,7 +24,7 @@ void draw_polygon(cv::Mat& img, const std::vector<cv::Point2i>& points)
 
     // Based on source: https://docs.opencv.org/3.2.0/d3/d96/tutorial_basic_geometric_drawing.html
     cv::Point2i rook_points[1][n_points];
-    for (int i = 0; i < points.size(); ++i) {
+    for (size_t i = 0; i < points.size(); ++i) {
         rook_points[0][i] = points[i];
     }
     const cv::Point2i* polygons[1] = { rook_points[0] };
@@ -43,7 +43,7 @@ void draw_curve(cv::Mat& img, const std::vector<cv::Point2i>& points,
         throw std::invalid_argument("There must be at least 2 points to draw.");
     }
 
-    for (int i = 1; i < points.size(); ++i) {
+    for (size_t i = 1; i < points.size(); ++i) {
         cv::line(img, points[i - 1], points[i], color, /*thickness=*/5);
     }
 }
