@@ -11,8 +11,11 @@ alt="circuit" width="240" height="180" border="10" /></a>
 
 ## Basic Build Instructions
 
-We first need to install OpenCV C++ and have Boost. After that,
+Prerequisites of OpenCV C++ and Boost. 
+1. Install OpenCV: `sudo apt update && sudo apt install libopencv-dev python3-opencv`
+2. Install Boost: `sudo apt-get install libboost-all-dev`
 
+Then,
 1. Clone this repo.
 2. Make a build directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
